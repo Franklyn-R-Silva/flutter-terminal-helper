@@ -9,9 +9,20 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
 ![VS Code](https://img.shields.io/badge/VS%20Code-1.80+-007ACC)
-![Open VSX](https://img.shields.io/badge/Open%20VSX-compatible-a60ee5)
+[![Open VSX](https://img.shields.io/open-vsx/v/Franklyn-R-Silva/flutter-terminal-helper?label=Open%20VSX&color=a60ee5)](https://open-vsx.org/extension/Franklyn-R-Silva/flutter-terminal-helper)
 
 </div>
+
+<!--
+## Preview
+
+Add a short screen recording / screenshots here — extensions with a visual
+preview convert far better on the Marketplace. Drop the files in `images/` and
+uncomment:
+
+![Flutter Terminal Helper in action](images/demo.gif)
+-->
+
 
 A lightweight sidebar for Flutter and Dart developers. Browse the most-used CLI
 commands grouped by category and send them to your terminal with a single click —
@@ -23,9 +34,13 @@ no need to memorize flags or retype long commands.
 ## Features
 
 - **Sidebar TreeView** — commands grouped into categories (Flutter, Dart,
-  Firebase, Supabase, …).
-- **Search** 🔍 — a magnifying-glass button opens a searchable list of every
-  command; pick one to paste or run it.
+  Firebase, Supabase, Melos, GetX, …).
+- **Search** 🔍 — a magnifying-glass button (**Ctrl+Alt+F**) opens a searchable
+  list of every command; pick one to paste or run it.
+- **Favorites** ⭐ — star commands to pin them to the top of the sidebar.
+- **Recent** 🕘 — the commands you use are remembered automatically.
+- **Argument prompts** — commands like `flutter pub add` ask you for the value.
+- **FVM aware** — optionally run `flutter`/`dart` through `fvm`.
 - **Click to paste or run** — clicking a command pastes it into the terminal for
   review (default) or runs it immediately, depending on your settings.
 - **Inline actions** — each command has ▶ *run* and ⧉ *copy to clipboard* buttons.
@@ -53,6 +68,8 @@ no need to memorize flags or retype long commands.
 | 🔥 Firebase | `flutterfire configure`, `firebase deploy` |
 | 🔍 Info | `flutter --version`, `dart --version` |
 | 🟢 Supabase | `supabase start`, `db push`, `functions deploy` |
+| 📦 Melos | `melos bootstrap`, `melos run`, `melos publish` |
+| 🧩 GetX & Codegen | `get create page:`, `build_runner watch` |
 
 ## Installation
 
@@ -129,6 +146,9 @@ still created.
 | `flutterHelper.terminalName` | `Flutter` | Name of the dedicated terminal used by the extension. |
 | `flutterHelper.reuseTerminal` | `true` | Reuse the dedicated terminal instead of creating a new one each time. |
 | `flutterHelper.customCommands` | `[]` | Your own commands, shown in a **⭐ Custom Commands** category (see below). |
+| `flutterHelper.promptForArguments` | `true` | Ask for a value when a command expects an argument (e.g. `flutter pub add`). |
+| `flutterHelper.useFvm` | `auto` | Run `flutter`/`dart` through FVM: `auto` (detect `.fvmrc`), `on`, or `off`. |
+| `flutterHelper.recentLimit` | `8` | How many recent commands to keep in the 🕘 Recent category (`0` disables it). |
 
 ### Custom commands
 

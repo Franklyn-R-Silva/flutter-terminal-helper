@@ -14,6 +14,9 @@ const CONTRIBUTED_COMMANDS = [
   "flutterHelper.copyCommand",
   "flutterHelper.refreshCommands",
   "flutterHelper.searchCommands",
+  "flutterHelper.addFavorite",
+  "flutterHelper.removeFavorite",
+  "flutterHelper.clearRecent",
 ];
 
 suite("extension activation", () => {

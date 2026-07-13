@@ -59,9 +59,16 @@ that renders it → a terminal manager that acts on the selected command.
   that catches errors and shows a localized message, so a failing action never crashes the
   extension host. New commands should go through this helper.
 - **`src/terminal/terminalManager.ts`** — resolves/reuses the dedicated terminal (by the
-  configured name) and sends text. `sendToTerminal(cmd, execute)` — the `execute` boolean
-  maps to `terminal.sendText`'s addNewLine (true = run, false = paste for review).
-  `runDefaultAction()` reads the `flutterHelper.clickAction` setting.
+  configured name) and sends text. `sendToTerminal(cmd, execute)` (async) — the `execute`
+  boolean maps to `terminal.sendText`'s addNewLine (true = run, false = paste for review);
+  before sending it may prompt for a trailing argument (`needsArgument`, gated by
+  `promptForArguments`) and rewrite `flutter`/`dart` to run under FVM (`applyFvm`, pure +
+  unit-tested, driven by `useFvm`). `runDefaultAction()` reads `flutterHelper.clickAction`.
+- **`src/state/stores.ts`** — `FavoritesStore` and `RecentStore` over an injected
+  `vscode.Memento` (`context.globalState`), kept injectable so they're unit-tested with a
+  fake. The tree prepends **⭐ Favorites** / **🕘 Recent** dynamic categories from these;
+  `CommandItem` carries the full `FlutterCommand` and a `command`/`commandFavorite`
+  contextValue that drives the star toggle menus.
 - **`src/extension.ts`** — thin entry point; `activate()` just calls `registerCommandsTreeView`.
 
 **Build pipeline / two output dirs**: `tsc` compiles `src/` → `out/` (used for F5 debugging

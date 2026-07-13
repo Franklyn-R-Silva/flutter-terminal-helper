@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-13
+
+### Added
+
+- **Favorites** ⭐: star any command to pin it to a Favorites category at the top
+  of the sidebar (persisted across projects).
+- **Recent commands** 🕘: the commands you run/paste are remembered in a Recent
+  category (configurable via `flutterHelper.recentLimit`, clearable inline).
+- **Argument prompts**: commands that expect a value (those ending with a space,
+  e.g. `flutter pub add`) now ask for it via an input box
+  (`flutterHelper.promptForArguments`).
+- **FVM support**: `flutterHelper.useFvm` (`auto`/`on`/`off`) runs `flutter`/`dart`
+  through `fvm`; `auto` detects an `.fvmrc`/`.fvm` project.
+- **New categories**: 📦 Melos (monorepo) and 🧩 GetX & Codegen, with pt-BR
+  translations.
+- **Getting-started walkthrough** and a **Ctrl+Alt+F / Cmd+Alt+F** shortcut for
+  the command search; expanded marketplace keywords.
+
 ## [0.4.0] - 2026-07-13
 
 ### Added
@@ -114,7 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar TreeView with categorized Flutter and Dart CLI commands.
 - One-click paste of a command into the active terminal.
 
-[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.1.0...v0.2.0

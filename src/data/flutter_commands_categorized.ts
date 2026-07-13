@@ -176,4 +176,28 @@ export const FLUTTER_COMMAND_CATEGORIES: CommandCategory[] = [
       { label: "Functions Deploy", command: "supabase functions deploy", description: "Deploy Edge Functions" },
     ],
   },
+  {
+    name: "📦 Melos",
+    icon: "layers",
+    commands: [
+      { label: "Bootstrap", command: "melos bootstrap", description: "Install and link all packages in the monorepo" },
+      { label: "Clean", command: "melos clean", description: "Clean all packages in the monorepo" },
+      { label: "List", command: "melos list", description: "List the packages in the workspace" },
+      { label: "Run Script", command: "melos run ", description: "Run a Melos script (type the name)" },
+      { label: "Exec", command: "melos exec -- ", description: "Run a command in every package (type it)" },
+      { label: "Version", command: "melos version", description: "Version packages based on conventional commits" },
+      { label: "Publish", command: "melos publish", description: "Publish the workspace packages" },
+    ],
+  },
+  {
+    name: "🧩 GetX & Codegen",
+    icon: "symbol-namespace",
+    commands: [
+      { label: "Activate GetCLI", command: "dart pub global activate get_cli", description: "Install the GetX command-line tool" },
+      { label: "Create Page", command: "get create page:", description: "Scaffold a GetX page (type the name)" },
+      { label: "Generate Locales", command: "get generate locales ", description: "Generate translation files (type the path)" },
+      { label: "Generate Model", command: "get generate model", description: "Generate a model from JSON" },
+      { label: "Codegen Watch", command: "dart run build_runner watch -d", description: "Watch mode for Freezed/Riverpod/json_serializable" },
+    ],
+  },
 ];
