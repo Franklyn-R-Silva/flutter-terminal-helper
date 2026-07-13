@@ -1,0 +1,13 @@
+{
+  "ext.description": "Comandos CLI do Flutter & Dart organizados por categoria na barra lateral. Clique para colar ou executar no terminal.",
+  "view.flutterCommands.name": "Comandos Flutter",
+  "cmd.paste.title": "Colar comando no terminal",
+  "cmd.run.title": "Executar comando no terminal",
+  "cmd.copy.title": "Copiar comando",
+  "cmd.refresh.title": "Atualizar comandos",
+  "config.clickAction.desc": "Ação ao clicar em um comando na barra lateral.",
+  "config.clickAction.paste": "Cola o comando no terminal sem executar (você revisa antes de rodar).",
+  "config.clickAction.run": "Executa o comando no terminal imediatamente.",
+  "config.terminalName.desc": "Nome do terminal dedicado usado pela extensão.",
+  "config.reuseTerminal.desc": "Reutiliza o terminal dedicado da extensão em vez de criar um novo a cada comando."
+}

@@ -23,8 +23,8 @@ body:
       label: Steps to Reproduce
       description: Steps to reproduce the behavior
       placeholder: |
-        1. Open terminal
-        2. Press Ctrl+Space
+        1. Open the Flutter Helper sidebar
+        2. Click a command
         3. See error
     validations:
       required: true
@@ -61,7 +61,7 @@ body:
     attributes:
       label: Extension Version
       description: What version of Flutter Terminal Helper?
-      placeholder: e.g., 0.0.1
+      placeholder: e.g., 0.1.0
     validations:
       required: true
 

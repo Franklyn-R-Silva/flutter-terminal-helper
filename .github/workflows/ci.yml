@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x, 22.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -26,15 +26,29 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Compile TypeScript
-        run: npm run compile
+      - name: Type-check
+        run: npm run check-types
 
-      - name: Check for errors
-        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
 
-      - name: Upload artifacts
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Bundle extension
+        run: npm run package:build
+
+      # VS Code needs a display server to run the integration tests headlessly.
+      - name: Test
+        run: xvfb-run -a npm test
+
+      - name: Package .vsix
+        if: matrix.node-version == '20.x'
+        run: npm run package
+
+      - name: Upload .vsix artifact
         uses: actions/upload-artifact@v4
         if: matrix.node-version == '20.x'
         with:
-          name: compiled-extension
-          path: out/
+          name: flutter-terminal-helper-vsix
+          path: "*.vsix"

@@ -1,0 +1,15 @@
+out
+dist
+node_modules
+.vscode-test
+package-lock.json
+*.vsix
+
+# Docs and editor/CI config keep their own hand-authored formatting.
+*.md
+.github
+.vscode
+
+# The command catalog uses an intentional one-entry-per-line table style
+# that Prettier's line-wrapping would expand into noisy multi-line blocks.
+src/data/flutter_commands_categorized.ts

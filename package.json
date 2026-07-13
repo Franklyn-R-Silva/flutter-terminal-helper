@@ -1,48 +1,52 @@
 {
   "name": "flutter-terminal-helper",
   "displayName": "Flutter Terminal Helper",
-  "description": "Flutter and Dart CLI command suggestions with Ctrl+Space support in terminal and shell files",
-  "version": "0.0.1",
-  "publisher": "your-publisher-name",
+  "description": "%ext.description%",
+  "version": "0.2.0",
+  "l10n": "./l10n",
+  "publisher": "DevFullStack-Franklyn-R-Silva",
   "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#0B1622",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/flutter-terminal-helper.git"
+    "url": "https://github.com/Franklyn-R-Silva/flutter-terminal-helper.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/flutter-terminal-helper/issues"
+    "url": "https://github.com/Franklyn-R-Silva/flutter-terminal-helper/issues"
   },
-  "homepage": "https://github.com/your-username/flutter-terminal-helper#readme",
+  "homepage": "https://github.com/Franklyn-R-Silva/flutter-terminal-helper#readme",
   "keywords": [
     "flutter",
     "dart",
     "terminal",
-    "autocomplete",
-    "suggestions",
     "cli",
-    "helper",
     "commands",
-    "productivity"
+    "sidebar",
+    "productivity",
+    "helper"
   ],
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Other",
-    "Programming Languages",
     "Snippets"
   ],
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
           "id": "flutter-helper",
           "title": "Flutter Helper",
-          "icon": "$(rocket)"
+          "icon": "images/activitybar.svg"
         }
       ]
     },
@@ -50,21 +54,35 @@
       "flutter-helper": [
         {
           "id": "flutterCommands",
-          "name": "Flutter Commands",
-          "icon": "$(terminal)",
+          "name": "%view.flutterCommands.name%",
+          "icon": "images/activitybar.svg",
           "contextualTitle": "Flutter Helper"
         }
       ]
     },
     "commands": [
       {
-        "command": "flutterHelper.executeFromTree",
-        "title": "Paste Command in Terminal",
+        "command": "flutterHelper.pasteFromTree",
+        "title": "%cmd.paste.title%",
+        "category": "Flutter Helper",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "flutterHelper.runFromTree",
+        "title": "%cmd.run.title%",
+        "category": "Flutter Helper",
         "icon": "$(play)"
       },
       {
+        "command": "flutterHelper.copyCommand",
+        "title": "%cmd.copy.title%",
+        "category": "Flutter Helper",
+        "icon": "$(copy)"
+      },
+      {
         "command": "flutterHelper.refreshCommands",
-        "title": "Refresh Commands",
+        "title": "%cmd.refresh.title%",
+        "category": "Flutter Helper",
         "icon": "$(refresh)"
       }
     ],
@@ -75,17 +93,100 @@
           "when": "view == flutterCommands",
           "group": "navigation"
         }
+      ],
+      "view/item/context": [
+        {
+          "command": "flutterHelper.runFromTree",
+          "when": "view == flutterCommands && viewItem == command",
+          "group": "inline@1"
+        },
+        {
+          "command": "flutterHelper.copyCommand",
+          "when": "view == flutterCommands && viewItem == command",
+          "group": "inline@2"
+        },
+        {
+          "command": "flutterHelper.runFromTree",
+          "when": "view == flutterCommands && viewItem == command",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "flutterHelper.pasteFromTree",
+          "when": "view == flutterCommands && viewItem == command",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "flutterHelper.copyCommand",
+          "when": "view == flutterCommands && viewItem == command",
+          "group": "1_actions@3"
+        }
       ]
+    },
+    "configuration": {
+      "title": "Flutter Terminal Helper",
+      "properties": {
+        "flutterHelper.clickAction": {
+          "type": "string",
+          "enum": [
+            "paste",
+            "run"
+          ],
+          "enumDescriptions": [
+            "%config.clickAction.paste%",
+            "%config.clickAction.run%"
+          ],
+          "default": "paste",
+          "description": "%config.clickAction.desc%"
+        },
+        "flutterHelper.terminalName": {
+          "type": "string",
+          "default": "Flutter",
+          "description": "%config.terminalName.desc%"
+        },
+        "flutterHelper.reuseTerminal": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reuseTerminal.desc%"
+        }
+      }
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run package:build",
     "compile": "tsc -p ./",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "check-types": "tsc --noEmit -p ./",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "package:build": "node esbuild.mjs --production",
+    "esbuild": "node esbuild.mjs",
+    "esbuild:watch": "node esbuild.mjs --watch",
+    "pretest": "npm run compile && npm run package:build",
+    "test": "vscode-test",
+    "icon": "node scripts/generate-icon.js",
+    "package": "vsce package --no-dependencies",
+    "publish:ovsx": "ovsx publish --no-dependencies",
+    "version:patch": "npm version patch -m \"chore: release v%s\"",
+    "version:minor": "npm version minor -m \"chore: release v%s\"",
+    "version:major": "npm version major -m \"chore: release v%s\""
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.1",
     "@types/vscode": "^1.80.0",
-    "typescript": "^5.9.3"
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.28.1",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "mocha": "^11.7.6",
+    "ovsx": "^0.10.1",
+    "prettier": "^3.9.5",
+    "sharp": "^0.33.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.63.0"
   }
 }
