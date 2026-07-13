@@ -26,19 +26,22 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ### Adding New Flutter Commands
 
-To add new Flutter/Dart commands to the suggestions:
+To add new Flutter/Dart commands to the sidebar:
 
 1. Fork the repository
-2. Edit `src/data/flutter_commands.ts`
-3. Add your command(s) to the `FLUTTER_COMMANDS` array
-4. Include a comment explaining what the command does
-5. Test your changes locally
-6. Submit a pull request
+2. Edit `src/data/flutter_commands_categorized.ts`
+3. Add your command to the `commands` array of the relevant category
+4. Test your changes locally
+5. Submit a pull request
 
 Example:
 
 ```typescript
-"flutter your-command", // Brief description of what it does
+{
+  label: "Your Command",
+  command: "flutter your-command",
+  description: "Descrição em português do que o comando faz",
+},
 ```
 
 ### Pull Requests
@@ -47,9 +50,13 @@ Example:
 2. **Make your changes** following the code style
 3. **Test your changes** by running:
    ```bash
-   npm run compile
-   # Press F5 to test in VSCode
+   npm run lint       # ESLint + Prettier rules
+   npm test           # unit + integration tests
+   npm run compile    # then press F5 to test in VSCode
    ```
+   If you add a command, its description also needs a Portuguese (pt-BR)
+   translation in `l10n/bundle.l10n.pt-br.json` — the localization coverage
+   test will fail otherwise.
 4. **Update documentation** if needed (README.md, CHANGELOG.md)
 5. **Commit your changes** with a clear commit message
 6. **Push to your fork** and submit a pull request
@@ -75,7 +82,7 @@ Example:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/flutter-terminal-helper.git
+   git clone https://github.com/Franklyn-R-Silva/flutter-terminal-helper.git
    cd flutter-terminal-helper
    ```
 
@@ -107,15 +114,17 @@ Example:
 ```
 flutter-terminal-helper/
 ├── src/
-│   ├── commands/          # Command implementations
-│   ├── data/              # Flutter command list
-│   ├── providers/         # Completion providers
-│   ├── terminal/          # Custom terminal implementation
+│   ├── data/              # Command database (typed categories)
+│   ├── terminal/          # Dedicated-terminal handling
+│   ├── views/             # Sidebar TreeView + command registration
 │   └── extension.ts       # Main entry point
+├── images/                # Icon artwork
 ├── package.json           # Extension manifest
 ├── tsconfig.json          # TypeScript configuration
 └── README.md              # Documentation
 ```
+
+See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for the full layout.
 
 ## 🎯 Areas We Need Help With
 

@@ -4,103 +4,60 @@
 flutter-terminal-helper/
 │
 ├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.yml              # Bug report template
-│   │   ├── feature_request.yml         # Feature request template
-│   │   └── add_command.yml             # Add command template
-│   ├── PULL_REQUEST_TEMPLATE/
-│   │   └── pull_request_template.md    # PR template
+│   ├── ISSUE_TEMPLATE/                  # Bug / feature / add-command templates
+│   ├── PULL_REQUEST_TEMPLATE.md         # PR template
 │   └── workflows/
-│       └── ci.yml                      # GitHub Actions CI
+│       └── ci.yml                       # GitHub Actions CI (build + typecheck)
 │
-├── .vscode/
-│   ├── extensions.json                 # Recommended extensions
-│   ├── launch.json                     # Debug configuration
-│   └── tasks.json                      # Build tasks
+├── .vscode/                             # Debug/build config for development
 │
-├── out/                                # Compiled JavaScript (generated)
-│   └── ...
+├── images/
+│   ├── icon.svg                         # Source artwork (marketplace icon)
+│   ├── icon.png                         # Generated 128×128 icon (npm run icon)
+│   └── activitybar.svg                  # Activity Bar glyph
+│
+├── scripts/
+│   └── generate-icon.js                 # Renders icon.png from icon.svg (sharp)
 │
 ├── src/
-│   ├── commands/
-│   │   └── insertCommand.ts            # Insert command functionality
 │   ├── data/
-│   │   └── flutter_commands.ts         # 100+ Flutter/Dart commands
-│   ├── providers/
-│   │   └── completionProvider.ts       # Autocomplete for .sh/.ps1 files
+│   │   ├── flutter_commands_categorized.ts  # Command database (typed categories)
+│   │   └── commandsRepository.ts        # Validates/loads the catalog
 │   ├── terminal/
-│   │   └── flutterTerminal.ts          # Custom terminal implementation
-│   ├── utils/                          # Utility functions (empty for now)
-│   └── extension.ts                    # Main entry point
+│   │   └── terminalManager.ts           # Dedicated-terminal handling
+│   ├── views/
+│   │   └── commandsTreeView.ts          # Sidebar TreeView + command registration
+│   ├── test/                            # Unit + integration tests (Mocha)
+│   └── extension.ts                     # Entry point (activate/deactivate)
 │
-├── .gitignore                          # Git ignore rules
-├── .vscodeignore                       # VSCode extension ignore rules
-├── CHANGELOG.md                        # Version history
-├── CODE_OF_CONDUCT.md                  # Community guidelines
-├── CONTRIBUTING.md                     # Contribution guidelines
-├── LICENSE                             # MIT License
-├── package.json                        # Extension manifest
-├── package-lock.json                   # Dependency lock file
-├── PRE_PUBLISH_CHECKLIST.md           # Pre-publication checklist
-├── README.md                           # Main documentation
-├── SECURITY.md                         # Security policy
-└── tsconfig.json                       # TypeScript configuration
-
+├── out/                                 # tsc output — tests + F5 debugging (generated)
+├── dist/                                # esbuild bundle shipped in the .vsix (generated)
+│
+├── esbuild.mjs                          # Bundler (dist/extension.js)
+├── eslint.config.mjs                    # ESLint flat config
+├── .vscode-test.mjs                     # VS Code test runner config
+├── .prettierrc.json / .editorconfig     # Formatting config
+├── .vscodeignore                        # Files excluded from the .vsix package
+├── CHANGELOG.md                         # Version history (Keep a Changelog)
+├── CONTRIBUTING.md                      # Contribution guidelines
+├── LICENSE                              # MIT License
+├── package.json                         # Extension manifest
+├── README.md                            # Main documentation (English)
+├── SECURITY.md                          # Security policy
+└── tsconfig.json                        # TypeScript configuration
 ```
 
-## 📁 Key Files Explained
+## Key files
 
-### Extension Core
+| File | Responsibility |
+| --- | --- |
+| `src/extension.ts` | Activates the extension and registers the sidebar. |
+| `src/views/commandsTreeView.ts` | Builds the TreeView and registers the paste/run/copy commands. |
+| `src/terminal/terminalManager.ts` | Resolves and reuses the dedicated terminal; applies user settings. |
+| `src/data/flutter_commands_categorized.ts` | Typed list of categories and commands — the place to add new commands. |
+| `scripts/generate-icon.js` | Regenerates `images/icon.png` from the SVG source. |
 
-- **`src/extension.ts`** - Main entry point, activates the extension
-- **`package.json`** - Extension manifest with commands, keybindings, metadata
-- **`tsconfig.json`** - TypeScript compiler configuration
+## Notes
 
-### Features
-
-- **`src/commands/insertCommand.ts`** - Handles Ctrl+Space in terminal
-- **`src/providers/completionProvider.ts`** - Autocomplete in shell files
-- **`src/terminal/flutterTerminal.ts`** - Custom terminal with `?` trigger
-- **`src/data/flutter_commands.ts`** - Command database
-
-### GitHub
-
-- **`.github/ISSUE_TEMPLATE/`** - Issue templates for bugs, features, commands
-- **`.github/workflows/ci.yml`** - Automated testing on push/PR
-- **`CONTRIBUTING.md`** - How to contribute
-- **`CODE_OF_CONDUCT.md`** - Community standards
-
-### Documentation
-
-- **`README.md`** - Main documentation with features, installation, usage
-- **`CHANGELOG.md`** - Version history
-- **`SECURITY.md`** - Security policy
-- **`PRE_PUBLISH_CHECKLIST.md`** - Pre-publication checklist
-
-### Configuration
-
-- **`.vscode/launch.json`** - Press F5 to test extension
-- **`.vscode/tasks.json`** - Build tasks
-- **`.gitignore`** - Files to ignore in git
-- **`.vscodeignore`** - Files to ignore in extension package
-
-## 🎯 File Count Summary
-
-- **Total Files**: 25+
-- **TypeScript Files**: 6
-- **Markdown Files**: 7
-- **Configuration Files**: 7
-- **GitHub Templates**: 5
-
-## ✅ All Files in English
-
-Every file in the project is now fully in English:
-
-- ✅ Code comments
-- ✅ Documentation
-- ✅ Issue templates
-- ✅ Error messages
-- ✅ User-facing strings
-- ✅ Configuration files
-
-Ready for worldwide publication! 🌍
+- The extension UI is in Portuguese (pt-BR); code comments and documentation are in English.
+- Adding a command is a one-line change in `flutter_commands_categorized.ts`.
