@@ -2,9 +2,9 @@
   "name": "flutter-terminal-helper",
   "displayName": "Flutter Terminal Helper",
   "description": "%ext.description%",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "l10n": "./l10n",
-  "publisher": "DevFullStack-Franklyn-R-Silva",
+  "publisher": "Franklyn-R-Silva",
   "license": "MIT",
   "icon": "images/icon.png",
   "galleryBanner": {
@@ -147,6 +147,32 @@
           "type": "boolean",
           "default": true,
           "description": "%config.reuseTerminal.desc%"
+        },
+        "flutterHelper.customCommands": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "%config.customCommands.desc%",
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "command"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "%config.customCommands.label%"
+              },
+              "command": {
+                "type": "string",
+                "description": "%config.customCommands.command%"
+              },
+              "description": {
+                "type": "string",
+                "description": "%config.customCommands.description%"
+              }
+            }
+          }
         }
       }
     }

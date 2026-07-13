@@ -49,7 +49,10 @@ that renders it → a terminal manager that acts on the selected command.
   UI reads the catalog. It is intentionally `async` (so the source could later come from
   disk/network) and **fault-tolerant**: malformed commands are silently dropped and empty
   categories removed; it throws only when the whole catalog is empty/invalid. Preserve
-  this behavior when touching data loading.
+  this behavior when touching data loading. It also takes an optional `customCommands`
+  array (from the `flutterHelper.customCommands` setting, read in `commandsTreeView`) and
+  appends them as a trailing **⭐ Custom Commands** category via `buildCustomCategory` — kept
+  as a pure parameter so the repository stays testable without the VS Code API.
 - **`src/views/commandsTreeView.ts`** — the `TreeDataProvider`, `CommandItem` model, and
   all command registration. Two-level tree: categories → commands. Manages loading/error/
   empty header messages. Every registered command is wrapped by a local `register()` helper

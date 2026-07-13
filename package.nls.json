@@ -9,5 +9,9 @@
   "config.clickAction.paste": "Paste the command into the terminal without running it (review before running).",
   "config.clickAction.run": "Run the command in the terminal immediately.",
   "config.terminalName.desc": "Name of the dedicated terminal used by the extension.",
-  "config.reuseTerminal.desc": "Reuse the extension's dedicated terminal instead of creating a new one for each command."
+  "config.reuseTerminal.desc": "Reuse the extension's dedicated terminal instead of creating a new one for each command.",
+  "config.customCommands.desc": "Your own Flutter/Dart commands, shown in a **⭐ Custom Commands** category in the sidebar. Each entry needs a `label` and a `command`; `description` is optional.",
+  "config.customCommands.label": "Short name shown in the sidebar.",
+  "config.customCommands.command": "The CLI command pasted/run in the terminal.",
+  "config.customCommands.description": "Optional tooltip text for the command."
 }

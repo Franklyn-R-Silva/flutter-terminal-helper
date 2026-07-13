@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-13
+
+### Added
+
+- **Custom commands**: add your own Flutter/Dart commands via the
+  `flutterHelper.customCommands` setting — they appear in a **⭐ Custom Commands**
+  category in the sidebar and update live when you edit the setting. Invalid
+  entries are ignored, and the category name is localized (pt-BR).
+
+### Changed
+
+- Changed the extension `publisher` to `Franklyn-R-Silva` (the extension
+  identifier is now `Franklyn-R-Silva.flutter-terminal-helper`).
+
 ## [0.2.0] - 2026-07-13
 
 ### Added
@@ -89,7 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar TreeView with categorized Flutter and Dart CLI commands.
 - One-click paste of a command into the active terminal.
 
-[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.0.1...v0.1.0
 [0.0.1]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/releases/tag/v0.0.1

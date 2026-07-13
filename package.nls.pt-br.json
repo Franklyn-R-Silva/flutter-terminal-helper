@@ -9,5 +9,9 @@
   "config.clickAction.paste": "Cola o comando no terminal sem executar (você revisa antes de rodar).",
   "config.clickAction.run": "Executa o comando no terminal imediatamente.",
   "config.terminalName.desc": "Nome do terminal dedicado usado pela extensão.",
-  "config.reuseTerminal.desc": "Reutiliza o terminal dedicado da extensão em vez de criar um novo a cada comando."
+  "config.reuseTerminal.desc": "Reutiliza o terminal dedicado da extensão em vez de criar um novo a cada comando.",
+  "config.customCommands.desc": "Seus próprios comandos Flutter/Dart, exibidos em uma categoria **⭐ Custom Commands** na barra lateral. Cada item precisa de `label` e `command`; `description` é opcional.",
+  "config.customCommands.label": "Nome curto exibido na barra lateral.",
+  "config.customCommands.command": "O comando CLI colado/executado no terminal.",
+  "config.customCommands.description": "Texto opcional de dica (tooltip) do comando."
 }
