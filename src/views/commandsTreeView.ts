@@ -1,24 +1,95 @@
 // src/views/commandsTreeView.ts
 // =======================================
-// TreeView provider for Flutter commands sidebar
-// Shows commands organized by category
+// TreeView provider for the categorized Flutter commands.
+// Handles loading state, error state and fault tolerance, and localizes
+// all user-facing strings via vscode.l10n.
 // =======================================
 
 import * as vscode from "vscode";
-import { FLUTTER_COMMANDS_CATEGORIZED } from "../data/flutter_commands_categorized";
+import {
+  type CommandCategory,
+  type FlutterCommand,
+} from "../data/flutter_commands_categorized";
+import { loadCommandCategories } from "../data/commandsRepository";
+import { runDefaultAction, sendToTerminal } from "../terminal/terminalManager";
 
-type TreeDataChangeEvent = CommandItem | undefined | null | void;
+type TreeChange = CommandItem | undefined | null | void;
 
 export class FlutterCommandsProvider
-  implements vscode.TreeDataProvider<CommandItem>
+  implements vscode.TreeDataProvider<CommandItem>, vscode.Disposable
 {
-  private readonly _onDidChangeTreeData: vscode.EventEmitter<TreeDataChangeEvent> =
-    new vscode.EventEmitter<TreeDataChangeEvent>();
-  readonly onDidChangeTreeData: vscode.Event<TreeDataChangeEvent> =
+  private readonly _onDidChangeTreeData = new vscode.EventEmitter<TreeChange>();
+  readonly onDidChangeTreeData: vscode.Event<TreeChange> =
     this._onDidChangeTreeData.event;
 
-  refresh(): void {
+  private categories: CommandCategory[] = [];
+  private isLoading = false;
+  private loadError: string | undefined;
+  private treeView?: vscode.TreeView<CommandItem>;
+  // Monotonic token so a slow load can't overwrite a newer one (double refresh).
+  private loadToken = 0;
+
+  /** Wires the TreeView so the provider can update its header message. */
+  attach(treeView: vscode.TreeView<CommandItem>): void {
+    this.treeView = treeView;
+  }
+
+  /** (Re)loads the catalog with a loading state and error handling. */
+  async load(): Promise<void> {
+    const token = ++this.loadToken;
+    this.isLoading = true;
+    this.loadError = undefined;
+    this.updateMessage();
     this._onDidChangeTreeData.fire();
+
+    try {
+      const categories = await vscode.window.withProgress(
+        { location: { viewId: "flutterCommands" } },
+        () => loadCommandCategories()
+      );
+      // A newer load() started while we awaited: discard this stale result.
+      if (token !== this.loadToken) {
+        return;
+      }
+      this.categories = categories;
+    } catch (err) {
+      if (token !== this.loadToken) {
+        return;
+      }
+      this.categories = [];
+      this.loadError = err instanceof Error ? err.message : String(err);
+    } finally {
+      if (token === this.loadToken) {
+        this.isLoading = false;
+        this.updateMessage();
+        this._onDidChangeTreeData.fire();
+      }
+    }
+  }
+
+  dispose(): void {
+    this._onDidChangeTreeData.dispose();
+  }
+
+  refresh(): void {
+    void this.load();
+  }
+
+  private updateMessage(): void {
+    if (!this.treeView) {
+      return;
+    }
+    if (this.isLoading) {
+      this.treeView.message = vscode.l10n.t("Loading commands…");
+    } else if (this.loadError) {
+      this.treeView.message = vscode.l10n.t(
+        "Could not load the commands. Use refresh to try again."
+      );
+    } else if (this.categories.length === 0) {
+      this.treeView.message = vscode.l10n.t("No commands available.");
+    } else {
+      this.treeView.message = undefined;
+    }
   }
 
   getTreeItem(element: CommandItem): vscode.TreeItem {
@@ -26,108 +97,148 @@ export class FlutterCommandsProvider
   }
 
   getChildren(element?: CommandItem): Thenable<CommandItem[]> {
-    if (element) {
-      // Show commands in category
-      const commands =
-        FLUTTER_COMMANDS_CATEGORIZED[
-          element.label as keyof typeof FLUTTER_COMMANDS_CATEGORIZED
-        ];
+    // While loading or on error, keep the tree empty (message is shown instead).
+    if (this.isLoading || this.loadError) {
+      return Promise.resolve([]);
+    }
+
+    // Root level: categories.
+    if (!element) {
       return Promise.resolve(
-        commands.map(
-          (cmd: { label: string; command: string; description: string }) => {
-            const item = new CommandItem(
-              cmd.label,
-              vscode.TreeItemCollapsibleState.None,
-              "command"
-            );
-            item.command = {
-              command: "flutterHelper.executeFromTree",
-              title: "Execute Command",
-              arguments: [cmd.command],
-            };
-            item.tooltip = cmd.description;
-            item.description = cmd.description;
-            return item;
-          }
-        )
+        this.categories.map((category) => CommandItem.category(category))
       );
     }
 
-    // Root level - show categories
-    return Promise.resolve(
-      Object.keys(FLUTTER_COMMANDS_CATEGORIZED).map((category) => {
-        return new CommandItem(
-          category,
-          vscode.TreeItemCollapsibleState.Collapsed,
-          "category"
-        );
-      })
-    );
+    // Inside a category: its commands.
+    if (element.category) {
+      return Promise.resolve(
+        element.category.commands.map((cmd) => CommandItem.command(cmd))
+      );
+    }
+
+    return Promise.resolve([]);
   }
 }
 
 class CommandItem extends vscode.TreeItem {
-  constructor(
-    public readonly label: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly type: "category" | "command"
+  private constructor(
+    label: string,
+    collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly category?: CommandCategory,
+    public readonly commandText?: string
   ) {
     super(label, collapsibleState);
-
-    // Set icons based on type
-    if (type === "category") {
-      this.iconPath = new vscode.ThemeIcon(this.getCategoryIcon(label));
-    } else {
-      this.iconPath = new vscode.ThemeIcon("terminal");
-    }
-
-    this.contextValue = type;
   }
 
-  private getCategoryIcon(category: string): string {
-    const iconMap: { [key: string]: string } = {
-      "🧹 Clean & Dependencies": "trash",
-      "🏗️ Build": "package",
-      "▶️ Run": "play",
-      "📱 Devices": "device-mobile",
-      "🧪 Test & Analyze": "beaker",
-      "🧰 Configuration": "tools",
-      "🎯 Dart": "code",
-      "📦 Project": "folder",
-      "🔥 Firebase": "flame",
-      "🔍 Info": "info",
+  static category(category: CommandCategory): CommandItem {
+    const item = new CommandItem(
+      vscode.l10n.t(category.name),
+      vscode.TreeItemCollapsibleState.Collapsed,
+      category
+    );
+    item.iconPath = new vscode.ThemeIcon(category.icon);
+    item.contextValue = "category";
+    item.tooltip = vscode.l10n.t("{0} command(s)", category.commands.length);
+    return item;
+  }
+
+  static command(cmd: FlutterCommand): CommandItem {
+    const description = vscode.l10n.t(cmd.description);
+    const item = new CommandItem(
+      cmd.label,
+      vscode.TreeItemCollapsibleState.None,
+      undefined,
+      cmd.command
+    );
+    item.description = cmd.command.trim();
+    item.tooltip = new vscode.MarkdownString(
+      `**${cmd.label}**\n\n${description}\n\n\`${cmd.command.trim()}\``
+    );
+    item.iconPath = new vscode.ThemeIcon("terminal");
+    item.contextValue = "command";
+    // Clicking runs the configured default action (paste or run).
+    item.command = {
+      command: "flutterHelper.defaultAction",
+      title: "Flutter Helper",
+      arguments: [item],
     };
-    return iconMap[category] || "circle-outline";
+    return item;
   }
 }
 
+/** Extracts the command string from a tree item or a raw string argument. */
+function resolveCommand(arg: unknown): string | undefined {
+  if (typeof arg === "string") {
+    return arg;
+  }
+  if (arg instanceof CommandItem) {
+    return arg.commandText;
+  }
+  return undefined;
+}
+
 export function registerCommandsTreeView(context: vscode.ExtensionContext) {
-  const treeDataProvider = new FlutterCommandsProvider();
+  const provider = new FlutterCommandsProvider();
   const treeView = vscode.window.createTreeView("flutterCommands", {
-    treeDataProvider: treeDataProvider,
+    treeDataProvider: provider,
     showCollapseAll: true,
   });
+  provider.attach(treeView);
 
-  // Register command to execute from tree
-  const executeFromTree = vscode.commands.registerCommand(
-    "flutterHelper.executeFromTree",
-    (command: string) => {
-      const terminal =
-        vscode.window.activeTerminal || vscode.window.createTerminal("Flutter");
-      terminal.sendText(command, false); // false = don't execute, just paste
-      terminal.show();
-      vscode.window.showInformationMessage(`📋 Command pasted: ${command}`);
+  // Wraps handlers so a failing command never crashes the extension host.
+  const register = (
+    id: string,
+    handler: (arg: unknown) => void | Promise<void>
+  ) =>
+    context.subscriptions.push(
+      vscode.commands.registerCommand(id, async (arg: unknown) => {
+        try {
+          await handler(arg);
+        } catch (err) {
+          const detail = err instanceof Error ? err.message : String(err);
+          vscode.window.showErrorMessage(
+            vscode.l10n.t("Flutter Helper: the action failed. {0}", detail)
+          );
+        }
+      })
+    );
+
+  register("flutterHelper.defaultAction", (arg) => {
+    const command = resolveCommand(arg);
+    if (command) {
+      runDefaultAction(command);
     }
-  );
+  });
 
-  // Register refresh command
-  const refreshTree = vscode.commands.registerCommand(
-    "flutterHelper.refreshCommands",
-    () => {
-      treeDataProvider.refresh();
-      vscode.window.showInformationMessage("✅ Commands refreshed!");
+  register("flutterHelper.runFromTree", (arg) => {
+    const command = resolveCommand(arg);
+    if (command) {
+      sendToTerminal(command, true);
     }
-  );
+  });
 
-  context.subscriptions.push(treeView, executeFromTree, refreshTree);
+  register("flutterHelper.pasteFromTree", (arg) => {
+    const command = resolveCommand(arg);
+    if (command) {
+      sendToTerminal(command, false);
+    }
+  });
+
+  register("flutterHelper.copyCommand", async (arg) => {
+    const command = resolveCommand(arg);
+    if (command) {
+      await vscode.env.clipboard.writeText(command.trim());
+      vscode.window.setStatusBarMessage(
+        vscode.l10n.t("$(copy) Command copied"),
+        2000
+      );
+    }
+  });
+
+  register("flutterHelper.refreshCommands", () => provider.refresh());
+
+  context.subscriptions.push(treeView, provider);
+
+  // Initial load (async, with loading state).
+  void provider.load();
 }

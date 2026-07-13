@@ -1,24 +1,24 @@
 // src/extension.ts
 // =======================================
 // Entry point for the Flutter Terminal Helper extension.
-// Provides a TreeView sidebar with categorized Flutter/Dart commands
+// Registers the sidebar TreeView with the Flutter/Dart commands.
 // =======================================
 
 import * as vscode from "vscode";
 import { registerCommandsTreeView } from "./views/commandsTreeView";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("✅ Flutter Terminal Helper activated!");
-
-  // Register TreeView sidebar with Flutter commands
-  registerCommandsTreeView(context);
-
-  // Show activation message
-  vscode.window.showInformationMessage(
-    "✅ Flutter Helper activated! Check the sidebar for Flutter commands."
-  );
+  try {
+    registerCommandsTreeView(context);
+    console.log("Flutter Terminal Helper activated.");
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    vscode.window.showErrorMessage(
+      vscode.l10n.t("Flutter Helper failed to activate: {0}", detail)
+    );
+  }
 }
 
 export function deactivate() {
-  console.log("❌ Flutter Terminal Helper deactivated!");
+  // Nothing to clean up: subscriptions are disposed by VS Code.
 }

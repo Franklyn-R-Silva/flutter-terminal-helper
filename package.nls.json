@@ -1,0 +1,13 @@
+{
+  "ext.description": "Categorized Flutter & Dart CLI commands in a sidebar. Click to paste or run in your terminal.",
+  "view.flutterCommands.name": "Flutter Commands",
+  "cmd.paste.title": "Paste command in terminal",
+  "cmd.run.title": "Run command in terminal",
+  "cmd.copy.title": "Copy command",
+  "cmd.refresh.title": "Refresh commands",
+  "config.clickAction.desc": "Action when clicking a command in the sidebar.",
+  "config.clickAction.paste": "Paste the command into the terminal without running it (review before running).",
+  "config.clickAction.run": "Run the command in the terminal immediately.",
+  "config.terminalName.desc": "Name of the dedicated terminal used by the extension.",
+  "config.reuseTerminal.desc": "Reuse the extension's dedicated terminal instead of creating a new one for each command."
+}
