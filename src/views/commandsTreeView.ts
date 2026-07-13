@@ -43,9 +43,12 @@ export class FlutterCommandsProvider
     this._onDidChangeTreeData.fire();
 
     try {
+      const customCommands = vscode.workspace
+        .getConfiguration("flutterHelper")
+        .get<unknown[]>("customCommands", []);
       const categories = await vscode.window.withProgress(
         { location: { viewId: "flutterCommands" } },
-        () => loadCommandCategories()
+        () => loadCommandCategories(customCommands)
       );
       // A newer load() started while we awaited: discard this stale result.
       if (token !== this.loadToken) {
@@ -236,6 +239,15 @@ export function registerCommandsTreeView(context: vscode.ExtensionContext) {
   });
 
   register("flutterHelper.refreshCommands", () => provider.refresh());
+
+  // Reload when the user edits their custom commands so the sidebar updates.
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("flutterHelper.customCommands")) {
+        provider.refresh();
+      }
+    })
+  );
 
   context.subscriptions.push(treeView, provider);
 

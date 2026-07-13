@@ -5,7 +5,7 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 
-const EXTENSION_ID = "DevFullStack-Franklyn-R-Silva.flutter-terminal-helper";
+const EXTENSION_ID = "Franklyn-R-Silva.flutter-terminal-helper";
 
 const CONTRIBUTED_COMMANDS = [
   "flutterHelper.defaultAction",

@@ -124,6 +124,22 @@ still created.
 | `flutterHelper.clickAction` | `paste` | Action when clicking a command: `paste` (review first) or `run` (execute immediately). |
 | `flutterHelper.terminalName` | `Flutter` | Name of the dedicated terminal used by the extension. |
 | `flutterHelper.reuseTerminal` | `true` | Reuse the dedicated terminal instead of creating a new one each time. |
+| `flutterHelper.customCommands` | `[]` | Your own commands, shown in a **⭐ Custom Commands** category (see below). |
+
+### Custom commands
+
+Add your own frequently-used commands to the sidebar via
+`flutterHelper.customCommands` in your `settings.json`:
+
+```jsonc
+"flutterHelper.customCommands": [
+  { "label": "Build prod", "command": "flutter build apk --flavor prod -t lib/main_prod.dart" },
+  { "label": "Gen + Run", "command": "dart run build_runner build -d && flutter run", "description": "Codegen then run" }
+]
+```
+
+Each entry needs a `label` and a `command`; `description` is optional. The
+sidebar updates as soon as you save the setting.
 
 ## Requirements
 

@@ -3,7 +3,11 @@
 // pure logic and do not depend on the VS Code UI.
 
 import * as assert from "assert";
-import { loadCommandCategories } from "../data/commandsRepository";
+import {
+  loadCommandCategories,
+  buildCustomCategory,
+  CUSTOM_CATEGORY_NAME,
+} from "../data/commandsRepository";
 import { FLUTTER_COMMAND_CATEGORIES } from "../data/flutter_commands_categorized";
 
 suite("commandsRepository", () => {
@@ -38,6 +42,35 @@ suite("commandsRepository", () => {
         assert.strictEqual(typeof cmd.description, "string");
       }
     }
+  });
+
+  test("appends valid custom commands as a trailing category", async () => {
+    const base = await loadCommandCategories();
+    const withCustom = await loadCommandCategories([
+      { label: "My Build", command: "flutter build apk --flavor prod" },
+    ]);
+    assert.strictEqual(withCustom.length, base.length + 1);
+    const last = withCustom[withCustom.length - 1];
+    assert.strictEqual(last.name, CUSTOM_CATEGORY_NAME);
+    assert.strictEqual(last.commands[0].label, "My Build");
+  });
+
+  test("buildCustomCategory drops invalid entries and defaults the tooltip", () => {
+    const category = buildCustomCategory([
+      { label: "Ok", command: "flutter run" },
+      { label: "Bad", command: "   " }, // blank command → dropped
+      { label: "NoCmd" }, // missing command → dropped
+    ]);
+    assert.ok(category);
+    assert.strictEqual(category.commands.length, 1);
+    // description defaults to the command when omitted.
+    assert.strictEqual(category.commands[0].description, "flutter run");
+  });
+
+  test("buildCustomCategory returns null when nothing is valid", () => {
+    assert.strictEqual(buildCustomCategory([]), null);
+    assert.strictEqual(buildCustomCategory(undefined), null);
+    assert.strictEqual(buildCustomCategory([{ label: "x" }]), null);
   });
 
   test("command strings are unique within each category", () => {
