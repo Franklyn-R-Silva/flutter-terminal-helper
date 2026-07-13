@@ -158,4 +158,22 @@ export const FLUTTER_COMMAND_CATEGORIES: CommandCategory[] = [
       { label: "Flutter Help", command: "flutter --help", description: "Show the Flutter help" },
     ],
   },
+  {
+    name: "🟢 Supabase",
+    icon: "database",
+    commands: [
+      { label: "Login", command: "supabase login", description: "Log in to the Supabase CLI" },
+      { label: "Init", command: "supabase init", description: "Initialize Supabase in the project" },
+      { label: "Link", command: "supabase link --project-ref ", description: "Link to a Supabase project (type the ref)" },
+      { label: "Start", command: "supabase start", description: "Start the local Supabase stack" },
+      { label: "Stop", command: "supabase stop", description: "Stop the local Supabase stack" },
+      { label: "Status", command: "supabase status", description: "Show the local Supabase status" },
+      { label: "DB Push", command: "supabase db push", description: "Push local migrations to the database" },
+      { label: "DB Pull", command: "supabase db pull", description: "Pull the schema from the database" },
+      { label: "DB Reset", command: "supabase db reset", description: "Reset the local database" },
+      { label: "New Migration", command: "supabase migration new ", description: "Create a new migration (type the name)" },
+      { label: "Functions Serve", command: "supabase functions serve", description: "Serve Edge Functions locally" },
+      { label: "Functions Deploy", command: "supabase functions deploy", description: "Deploy Edge Functions" },
+    ],
+  },
 ];

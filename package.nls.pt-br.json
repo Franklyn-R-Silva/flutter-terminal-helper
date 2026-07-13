@@ -5,6 +5,7 @@
   "cmd.run.title": "Executar comando no terminal",
   "cmd.copy.title": "Copiar comando",
   "cmd.refresh.title": "Atualizar comandos",
+  "cmd.search.title": "Buscar comandos",
   "config.clickAction.desc": "Ação ao clicar em um comando na barra lateral.",
   "config.clickAction.paste": "Cola o comando no terminal sem executar (você revisa antes de rodar).",
   "config.clickAction.run": "Executa o comando no terminal imediatamente.",
