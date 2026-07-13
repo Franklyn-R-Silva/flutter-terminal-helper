@@ -13,6 +13,7 @@ const CONTRIBUTED_COMMANDS = [
   "flutterHelper.pasteFromTree",
   "flutterHelper.copyCommand",
   "flutterHelper.refreshCommands",
+  "flutterHelper.searchCommands",
 ];
 
 suite("extension activation", () => {

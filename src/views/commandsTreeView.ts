@@ -240,6 +240,30 @@ export function registerCommandsTreeView(context: vscode.ExtensionContext) {
 
   register("flutterHelper.refreshCommands", () => provider.refresh());
 
+  // Magnifying-glass search: flatten every command into a searchable picker.
+  register("flutterHelper.searchCommands", async () => {
+    const customCommands = vscode.workspace
+      .getConfiguration("flutterHelper")
+      .get<unknown[]>("customCommands", []);
+    const categories = await loadCommandCategories(customCommands);
+    const items = categories.flatMap((cat) =>
+      cat.commands.map((cmd) => ({
+        label: cmd.label,
+        description: cmd.command.trim(),
+        detail: `${vscode.l10n.t(cat.name)} — ${vscode.l10n.t(cmd.description)}`,
+        commandText: cmd.command,
+      }))
+    );
+    const picked = await vscode.window.showQuickPick(items, {
+      placeHolder: vscode.l10n.t("Search Flutter commands…"),
+      matchOnDescription: true,
+      matchOnDetail: true,
+    });
+    if (picked) {
+      runDefaultAction(picked.commandText);
+    }
+  });
+
   // Reload when the user edits their custom commands so the sidebar updates.
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {

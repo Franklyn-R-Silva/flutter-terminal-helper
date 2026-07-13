@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-13
+
+### Added
+
+- **Command search** 🔍: a magnifying-glass button in the sidebar title opens a
+  searchable quick-pick of every command (built-in and custom); selecting one
+  pastes or runs it per your `clickAction` setting.
+- **Supabase category** 🟢: Supabase CLI commands (login, init, link, start/stop,
+  status, db push/pull/reset, new migration, functions serve/deploy) with
+  Portuguese (pt-BR) translations.
+
 ## [0.3.0] - 2026-07-13
 
 ### Added
@@ -103,7 +114,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar TreeView with categorized Flutter and Dart CLI commands.
 - One-click paste of a command into the active terminal.
 
-[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.0.1...v0.1.0

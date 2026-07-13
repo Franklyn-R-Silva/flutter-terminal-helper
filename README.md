@@ -22,7 +22,10 @@ no need to memorize flags or retype long commands.
 
 ## Features
 
-- **Sidebar TreeView** — commands grouped into 11 categories.
+- **Sidebar TreeView** — commands grouped into categories (Flutter, Dart,
+  Firebase, Supabase, …).
+- **Search** 🔍 — a magnifying-glass button opens a searchable list of every
+  command; pick one to paste or run it.
 - **Click to paste or run** — clicking a command pastes it into the terminal for
   review (default) or runs it immediately, depending on your settings.
 - **Inline actions** — each command has ▶ *run* and ⧉ *copy to clipboard* buttons.
@@ -49,6 +52,7 @@ no need to memorize flags or retype long commands.
 | ⚙️ Code Generation | `build_runner build`, `gen-l10n` |
 | 🔥 Firebase | `flutterfire configure`, `firebase deploy` |
 | 🔍 Info | `flutter --version`, `dart --version` |
+| 🟢 Supabase | `supabase start`, `db push`, `functions deploy` |
 
 ## Installation
 

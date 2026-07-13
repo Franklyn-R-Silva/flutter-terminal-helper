@@ -2,7 +2,7 @@
   "name": "flutter-terminal-helper",
   "displayName": "Flutter Terminal Helper",
   "description": "%ext.description%",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "l10n": "./l10n",
   "publisher": "Franklyn-R-Silva",
   "license": "MIT",
@@ -84,14 +84,25 @@
         "title": "%cmd.refresh.title%",
         "category": "Flutter Helper",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "flutterHelper.searchCommands",
+        "title": "%cmd.search.title%",
+        "category": "Flutter Helper",
+        "icon": "$(search)"
       }
     ],
     "menus": {
       "view/title": [
         {
+          "command": "flutterHelper.searchCommands",
+          "when": "view == flutterCommands",
+          "group": "navigation@1"
+        },
+        {
           "command": "flutterHelper.refreshCommands",
           "when": "view == flutterCommands",
-          "group": "navigation"
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
