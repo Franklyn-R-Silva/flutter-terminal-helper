@@ -6,10 +6,16 @@
 
 import * as vscode from "vscode";
 import { registerCommandsTreeView } from "./views/commandsTreeView";
+import { FavoritesStore, RecentStore } from "./state/stores";
 
 export function activate(context: vscode.ExtensionContext) {
   try {
-    registerCommandsTreeView(context);
+    const recentLimit = vscode.workspace
+      .getConfiguration("flutterHelper")
+      .get<number>("recentLimit", 8);
+    const favorites = new FavoritesStore(context.globalState);
+    const recent = new RecentStore(context.globalState, recentLimit);
+    registerCommandsTreeView(context, favorites, recent);
     console.log("Flutter Terminal Helper activated.");
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);

@@ -1,8 +1,9 @@
 // src/views/commandsTreeView.ts
 // =======================================
 // TreeView provider for the categorized Flutter commands.
-// Handles loading state, error state and fault tolerance, and localizes
-// all user-facing strings via vscode.l10n.
+// Handles loading state, error state and fault tolerance, localizes all
+// user-facing strings via vscode.l10n, and surfaces dynamic Favorites and
+// Recent categories backed by persistent stores.
 // =======================================
 
 import * as vscode from "vscode";
@@ -12,8 +13,13 @@ import {
 } from "../data/flutter_commands_categorized";
 import { loadCommandCategories } from "../data/commandsRepository";
 import { runDefaultAction, sendToTerminal } from "../terminal/terminalManager";
+import { FavoritesStore, RecentStore } from "../state/stores";
 
 type TreeChange = CommandItem | undefined | null | void;
+
+/** English keys (localized in CommandItem) for the dynamic categories. */
+export const FAVORITES_CATEGORY_NAME = "⭐ Favorites";
+export const RECENT_CATEGORY_NAME = "🕘 Recent";
 
 export class FlutterCommandsProvider
   implements vscode.TreeDataProvider<CommandItem>, vscode.Disposable
@@ -28,6 +34,11 @@ export class FlutterCommandsProvider
   private treeView?: vscode.TreeView<CommandItem>;
   // Monotonic token so a slow load can't overwrite a newer one (double refresh).
   private loadToken = 0;
+
+  constructor(
+    private readonly favorites: FavoritesStore,
+    private readonly recent: RecentStore
+  ) {}
 
   /** Wires the TreeView so the provider can update its header message. */
   attach(treeView: vscode.TreeView<CommandItem>): void {
@@ -99,6 +110,43 @@ export class FlutterCommandsProvider
     return element;
   }
 
+  /** Built-in + custom categories, with Favorites/Recent prepended. */
+  private rootCategories(): {
+    category: CommandCategory;
+    kind: CategoryKind;
+  }[] {
+    const roots: { category: CommandCategory; kind: CategoryKind }[] = [];
+
+    const favorites = this.favorites.list();
+    if (favorites.length > 0) {
+      roots.push({
+        category: {
+          name: FAVORITES_CATEGORY_NAME,
+          icon: "star-full",
+          commands: favorites,
+        },
+        kind: "favorites",
+      });
+    }
+
+    const recent = this.recent.list();
+    if (recent.length > 0) {
+      roots.push({
+        category: {
+          name: RECENT_CATEGORY_NAME,
+          icon: "history",
+          commands: recent,
+        },
+        kind: "recent",
+      });
+    }
+
+    for (const category of this.categories) {
+      roots.push({ category, kind: "normal" });
+    }
+    return roots;
+  }
+
   getChildren(element?: CommandItem): Thenable<CommandItem[]> {
     // While loading or on error, keep the tree empty (message is shown instead).
     if (this.isLoading || this.loadError) {
@@ -108,14 +156,18 @@ export class FlutterCommandsProvider
     // Root level: categories.
     if (!element) {
       return Promise.resolve(
-        this.categories.map((category) => CommandItem.category(category))
+        this.rootCategories().map(({ category, kind }) =>
+          CommandItem.category(category, kind)
+        )
       );
     }
 
     // Inside a category: its commands.
     if (element.category) {
       return Promise.resolve(
-        element.category.commands.map((cmd) => CommandItem.command(cmd))
+        element.category.commands.map((cmd) =>
+          CommandItem.command(cmd, this.favorites.has(cmd.command))
+        )
       );
     }
 
@@ -123,42 +175,54 @@ export class FlutterCommandsProvider
   }
 }
 
+type CategoryKind = "normal" | "favorites" | "recent";
+
 class CommandItem extends vscode.TreeItem {
   private constructor(
     label: string,
     collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly category?: CommandCategory,
-    public readonly commandText?: string
+    public readonly cmd?: FlutterCommand
   ) {
     super(label, collapsibleState);
   }
 
-  static category(category: CommandCategory): CommandItem {
+  /** The raw command string, for handlers that only need the text. */
+  get commandText(): string | undefined {
+    return this.cmd?.command;
+  }
+
+  static category(category: CommandCategory, kind: CategoryKind): CommandItem {
     const item = new CommandItem(
       vscode.l10n.t(category.name),
       vscode.TreeItemCollapsibleState.Collapsed,
       category
     );
     item.iconPath = new vscode.ThemeIcon(category.icon);
-    item.contextValue = "category";
+    item.contextValue =
+      kind === "recent"
+        ? "recentCategory"
+        : kind === "favorites"
+          ? "favoritesCategory"
+          : "category";
     item.tooltip = vscode.l10n.t("{0} command(s)", category.commands.length);
     return item;
   }
 
-  static command(cmd: FlutterCommand): CommandItem {
+  static command(cmd: FlutterCommand, isFavorite: boolean): CommandItem {
     const description = vscode.l10n.t(cmd.description);
     const item = new CommandItem(
       cmd.label,
       vscode.TreeItemCollapsibleState.None,
       undefined,
-      cmd.command
+      cmd
     );
     item.description = cmd.command.trim();
     item.tooltip = new vscode.MarkdownString(
       `**${cmd.label}**\n\n${description}\n\n\`${cmd.command.trim()}\``
     );
-    item.iconPath = new vscode.ThemeIcon("terminal");
-    item.contextValue = "command";
+    item.iconPath = new vscode.ThemeIcon(isFavorite ? "star-full" : "terminal");
+    item.contextValue = isFavorite ? "commandFavorite" : "command";
     // Clicking runs the configured default action (paste or run).
     item.command = {
       command: "flutterHelper.defaultAction",
@@ -180,8 +244,21 @@ function resolveCommand(arg: unknown): string | undefined {
   return undefined;
 }
 
-export function registerCommandsTreeView(context: vscode.ExtensionContext) {
-  const provider = new FlutterCommandsProvider();
+/** Extracts a full command object from a tree item (for favorites/recents). */
+function resolveCommandObject(arg: unknown): FlutterCommand | undefined {
+  if (arg instanceof CommandItem && arg.cmd) {
+    return arg.cmd;
+  }
+  const command = resolveCommand(arg);
+  return command ? { label: command, command, description: "" } : undefined;
+}
+
+export function registerCommandsTreeView(
+  context: vscode.ExtensionContext,
+  favorites: FavoritesStore,
+  recent: RecentStore
+) {
+  const provider = new FlutterCommandsProvider(favorites, recent);
   const treeView = vscode.window.createTreeView("flutterCommands", {
     treeDataProvider: provider,
     showCollapseAll: true,
@@ -206,24 +283,33 @@ export function registerCommandsTreeView(context: vscode.ExtensionContext) {
       })
     );
 
-  register("flutterHelper.defaultAction", (arg) => {
+  // Records a successful send in the recent list (best-effort).
+  const recordRecent = async (arg: unknown, sent: boolean) => {
+    const cmd = resolveCommandObject(arg);
+    if (sent && cmd) {
+      await recent.record(cmd);
+      provider.refresh();
+    }
+  };
+
+  register("flutterHelper.defaultAction", async (arg) => {
     const command = resolveCommand(arg);
     if (command) {
-      runDefaultAction(command);
+      await recordRecent(arg, await runDefaultAction(command));
     }
   });
 
-  register("flutterHelper.runFromTree", (arg) => {
+  register("flutterHelper.runFromTree", async (arg) => {
     const command = resolveCommand(arg);
     if (command) {
-      sendToTerminal(command, true);
+      await recordRecent(arg, await sendToTerminal(command, true));
     }
   });
 
-  register("flutterHelper.pasteFromTree", (arg) => {
+  register("flutterHelper.pasteFromTree", async (arg) => {
     const command = resolveCommand(arg);
     if (command) {
-      sendToTerminal(command, false);
+      await recordRecent(arg, await sendToTerminal(command, false));
     }
   });
 
@@ -236,6 +322,27 @@ export function registerCommandsTreeView(context: vscode.ExtensionContext) {
         2000
       );
     }
+  });
+
+  register("flutterHelper.addFavorite", async (arg) => {
+    const cmd = resolveCommandObject(arg);
+    if (cmd) {
+      await favorites.toggle(cmd);
+      provider.refresh();
+    }
+  });
+
+  register("flutterHelper.removeFavorite", async (arg) => {
+    const command = resolveCommand(arg);
+    if (command) {
+      await favorites.remove(command);
+      provider.refresh();
+    }
+  });
+
+  register("flutterHelper.clearRecent", async () => {
+    await recent.clear();
+    provider.refresh();
   });
 
   register("flutterHelper.refreshCommands", () => provider.refresh());
@@ -251,7 +358,7 @@ export function registerCommandsTreeView(context: vscode.ExtensionContext) {
         label: cmd.label,
         description: cmd.command.trim(),
         detail: `${vscode.l10n.t(cat.name)} — ${vscode.l10n.t(cmd.description)}`,
-        commandText: cmd.command,
+        cmd,
       }))
     );
     const picked = await vscode.window.showQuickPick(items, {
@@ -260,7 +367,11 @@ export function registerCommandsTreeView(context: vscode.ExtensionContext) {
       matchOnDetail: true,
     });
     if (picked) {
-      runDefaultAction(picked.commandText);
+      const sent = await runDefaultAction(picked.cmd.command);
+      if (sent) {
+        await recent.record(picked.cmd);
+        provider.refresh();
+      }
     }
   });
 
