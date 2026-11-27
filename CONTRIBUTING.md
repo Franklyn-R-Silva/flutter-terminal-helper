@@ -40,19 +40,25 @@ Example:
 {
   label: "Your Command",
   command: "flutter your-command",
-  description: "Descrição em português do que o comando faz",
+  description: "What the command does, in English",
 },
 ```
+
+The description is the English source string. Add its Portuguese (pt-BR)
+translation to `l10n/bundle.l10n.pt-br.json`; the localization coverage test
+fails otherwise. End `command` with a space if it needs a trailing argument —
+the user is then prompted for it.
 
 ### Pull Requests
 
 1. **Fork the repository** and create your branch from `main`
 2. **Make your changes** following the code style
-3. **Test your changes** by running:
+3. **Test your changes** by running the same checks as CI:
    ```bash
-   npm run lint       # ESLint + Prettier rules
-   npm test           # unit + integration tests
-   npm run compile    # then press F5 to test in VSCode
+   npm run check-types   # TypeScript strict mode
+   npm run lint          # ESLint, zero warnings allowed
+   npm run format:check  # Prettier
+   npm test              # unit + integration tests in a real VS Code
    ```
    If you add a command, its description also needs a Portuguese (pt-BR)
    translation in `l10n/bundle.l10n.pt-br.json` — the localization coverage
@@ -67,7 +73,9 @@ Example:
 - Describe what changes you made and why
 - Reference any related issues
 - Keep changes focused - one feature/fix per PR
-- Ensure all tests pass and there are no compilation errors
+- **New behavior and bug fixes come with a test** in `src/test/` (pure logic as
+  unit tests; anything that needs the VS Code API in `extension.test.ts`)
+- Ensure all CI checks pass: type-check, lint (zero warnings), format and tests
 
 ### Code Style
 
@@ -108,6 +116,34 @@ Example:
    ```bash
    npm run watch
    ```
+
+### Development scripts
+
+| Script | What it does |
+| --- | --- |
+| `npm run compile` / `npm run watch` | Type-check and emit to `out/` (used by F5 debugging and tests). |
+| `npm run check-types` | Type-check only (no emit). |
+| `npm run lint` | ESLint over the whole project; fails on any warning. |
+| `npm run format` / `format:check` | Format with Prettier / verify formatting. |
+| `npm test` | Unit + integration tests in a real VS Code instance (`xvfb-run -a npm test` on headless Linux). |
+| `npm run package:build` | Bundle + minify the extension with esbuild into `dist/`. |
+| `npm run package` | Produce a `.vsix`. |
+
+### Releasing (maintainers)
+
+Versions follow [Semantic Versioning](https://semver.org/). Move the
+`[Unreleased]` notes in `CHANGELOG.md` into a dated section, then:
+
+```bash
+npm run version:minor    # or version:patch / version:major — bumps and tags vX.Y.Z
+git push --follow-tags
+```
+
+The tag triggers [`release.yml`](.github/workflows/release.yml): it builds and
+tests the extension, creates a GitHub Release with the `.vsix`, and publishes to
+Open VSX through **trusted publishing** (OIDC — no stored token; registered on
+open-vsx.org for `release.yml`). Publishing to the VS Code Marketplace runs only
+when a `VSCE_PAT` repository secret exists.
 
 ## 📝 Project Structure
 

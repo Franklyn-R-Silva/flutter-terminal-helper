@@ -30,11 +30,15 @@ build and runs `out/test/**/*.test.js` in the extension host. `pretest` builds b
 `--grep`: `npx vscode-test --grep "localization"`. On Linux/CI the host needs a display —
 CI wraps it with `xvfb-run`. To debug interactively instead, press **F5**.
 
-CI (`.github/workflows/ci.yml`) runs check-types, lint, format:check, the test suite, and
-`.vsix` packaging on Node 20 & 22.
+CI (`.github/workflows/ci.yml`) runs check-types, lint (`--max-warnings=0`), format:check,
+the test suite, and `.vsix` packaging on Node 22 & 24.
 
-Releases use `npm run version:patch|minor|major` (bumps + tags), then `npm run package`
-and `npm run publish:ovsx`.
+Releases use `npm run version:patch|minor|major` (bumps + tags) and `git push --follow-tags`;
+`release.yml` then creates the GitHub Release and publishes to Open VSX via trusted
+publishing (OIDC, no token). `@vscode/test-cli`'s nested mocha is forced to the root
+version through `overrides` in package.json (drops a high advisory in mocha 11).
+OpenSSF Best Practices entry: https://www.bestpractices.dev/projects/17193 — keep its
+answers true when changing CI, CONTRIBUTING or SECURITY.
 
 ## Architecture
 
