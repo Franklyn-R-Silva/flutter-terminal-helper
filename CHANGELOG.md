@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The extension now also publishes to the **Visual Studio Marketplace**, so it
+  shows up in VS Code's Extensions search (before, it was only on Open VSX).
+  ([#16](https://github.com/Franklyn-R-Silva/flutter-terminal-helper/issues/16))
+
+### Changed
+
+- Release workflow: the Marketplace uses trusted publishing (OIDC) instead of a
+  `VSCE_PAT` token, since Azure DevOps global PATs stop working on 2026-12-01.
+  Each registry publishes even when the other fails, and re-running a tag skips
+  versions that are already published.
+- README: the install section says which registry each editor uses.
+
 ## [0.6.0] - 2026-11-27
 
 ### Added

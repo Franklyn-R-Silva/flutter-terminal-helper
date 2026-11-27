@@ -35,8 +35,6 @@ Closes #(issue number)
 
 - [ ] Tested locally by pressing F5 in VSCode
 - [ ] Verified commands work correctly in terminal
-- [ ] Tested autocomplete in `.sh` files
-- [ ] Tested autocomplete in `.ps1` files
 - [ ] No compilation errors
 - [ ] No TypeScript errors
 
