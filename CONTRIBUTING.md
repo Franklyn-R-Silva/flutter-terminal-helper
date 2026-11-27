@@ -141,9 +141,13 @@ git push --follow-tags
 
 The tag triggers [`release.yml`](.github/workflows/release.yml): it builds and
 tests the extension, creates a GitHub Release with the `.vsix`, and publishes to
-Open VSX through **trusted publishing** (OIDC — no stored token; registered on
-open-vsx.org for `release.yml`). Publishing to the VS Code Marketplace runs only
-when a `VSCE_PAT` repository secret exists.
+Open VSX and the VS Code Marketplace through **trusted publishing** (GitHub OIDC,
+no stored token). Each registry has a Trusted Publishing policy for publisher
+`Franklyn-R-Silva`, repository `flutter-terminal-helper` and workflow
+`release.yml`: on open-vsx.org under Trusted Publishers, and on
+marketplace.visualstudio.com/manage under the publisher's Trusted Publishing
+tab. Each registry publishes even when the other fails, and re-running a tag
+skips versions that are already published.
 
 ## 📝 Project Structure
 

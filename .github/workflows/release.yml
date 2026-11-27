@@ -48,8 +48,8 @@ jobs:
           path: "*.vsix"
 
   # Only tags publish. Installs with --ignore-scripts so no dependency code runs
-  # next to the credentials; only vsce/ovsx execute. Open VSX uses trusted
-  # publishing (OIDC), registered on open-vsx.org for this file: no stored token.
+  # next to the credentials; only vsce/ovsx execute. Both registries use trusted
+  # publishing (GitHub OIDC) registered for this file: no stored token.
   publish:
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
@@ -57,9 +57,6 @@ jobs:
     permissions:
       contents: write
       id-token: write
-
-    env:
-      VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -74,7 +71,8 @@ jobs:
       - name: Install publishing tools
         run: npm ci --ignore-scripts
 
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      - id: vsix
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: flutter-terminal-helper-vsix
 
@@ -84,10 +82,15 @@ jobs:
           files: "*.vsix"
           generate_release_notes: true
 
+      # Each registry publishes even if the other (or the GitHub Release) fails,
+      # but only after the locked tools installed and the .vsix downloaded:
+      # otherwise npx would fetch an unpinned latest ovsx/vsce. --skip-duplicate
+      # makes re-running a tag safe after a partial failure.
       - name: Publish to Open VSX
-        run: npx ovsx publish *.vsix --trusted-publishing
+        if: ${{ !cancelled() && steps.vsix.outcome == 'success' }}
+        run: npx ovsx publish *.vsix --trusted-publishing --skip-duplicate
 
-      # Self-skips until the VSCE_PAT repo secret is configured.
+      # VS Code itself only searches the Visual Studio Marketplace.
       - name: Publish to VS Code Marketplace
-        if: ${{ env.VSCE_PAT != '' }}
-        run: npx @vscode/vsce publish --packagePath *.vsix -p "$VSCE_PAT"
+        if: ${{ !cancelled() && steps.vsix.outcome == 'success' }}
+        run: npx @vscode/vsce publish --packagePath *.vsix --oidc --skip-duplicate

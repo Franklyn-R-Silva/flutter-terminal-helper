@@ -41,13 +41,18 @@ editor's display language.
 
 ## Installation
 
-**VS Code, Cursor, Windsurf, VSCodium, Antigravity and other compatible editors**
-
 1. Open the Extensions view (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd>).
 2. Search for **Flutter Terminal Helper** and click **Install**.
 
-The extension is published on [Open VSX](https://open-vsx.org/extension/Franklyn-R-Silva/flutter-terminal-helper).
-You can also download the `.vsix` of any version from
+Each editor searches its own registry, and the extension is on both:
+
+| Editor | Registry |
+| --- | --- |
+| VS Code | [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Franklyn-R-Silva.flutter-terminal-helper) |
+| VSCodium, Cursor, Windsurf, Antigravity, Gitpod… | [Open VSX](https://open-vsx.org/extension/Franklyn-R-Silva/flutter-terminal-helper) |
+
+From a terminal: `code --install-extension Franklyn-R-Silva.flutter-terminal-helper`
+(use `codium`, `cursor`… for other editors). You can also download the `.vsix` of any version from
 [GitHub Releases](https://github.com/Franklyn-R-Silva/flutter-terminal-helper/releases)
 and use **Extensions: Install from VSIX…**.
 
