@@ -47,7 +47,7 @@ suite("FavoritesStore", () => {
 
 suite("RecentStore", () => {
   test("record moves to front, de-dupes and caps at the limit", async () => {
-    const store = new RecentStore(new FakeMemento(), 3);
+    const store = new RecentStore(new FakeMemento(), () => 3);
     await store.record(cmd("A", "flutter a"));
     await store.record(cmd("B", "flutter b"));
     await store.record(cmd("C", "flutter c"));
@@ -59,14 +59,26 @@ suite("RecentStore", () => {
   });
 
   test("limit 0 disables recording entirely", async () => {
-    const store = new RecentStore(new FakeMemento(), 0);
+    const store = new RecentStore(new FakeMemento(), () => 0);
     await store.record(cmd("A", "flutter a"));
     assert.deepStrictEqual(store.list(), []);
   });
 
+  test("a changed limit applies without recreating the store", async () => {
+    let limit = 3;
+    const store = new RecentStore(new FakeMemento(), () => limit);
+    await store.record(cmd("A", "flutter a"));
+    await store.record(cmd("B", "flutter b"));
+    limit = 1;
+    assert.deepStrictEqual(
+      store.list().map((c) => c.command),
+      ["flutter b"]
+    );
+  });
+
   test("clear empties the list", async () => {
     const mem = new FakeMemento();
-    const store = new RecentStore(mem, 5);
+    const store = new RecentStore(mem, () => 5);
     await store.record(cmd("A", "flutter a"));
     await store.clear();
     assert.deepStrictEqual(store.list(), []);

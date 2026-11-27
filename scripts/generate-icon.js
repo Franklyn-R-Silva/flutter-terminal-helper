@@ -13,7 +13,7 @@ async function main() {
     sharp = require("sharp");
   } catch {
     console.error(
-      "Dependencia 'sharp' nao encontrada. Rode `npm install` antes de `npm run icon`."
+      "Dependencia 'sharp' nao encontrada (so serve para o icone). Rode `npm install --no-save sharp` antes de `npm run icon`."
     );
     process.exit(1);
   }

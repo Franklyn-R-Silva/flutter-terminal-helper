@@ -6,10 +6,11 @@
 
 **Categorized Flutter & Dart CLI commands in your sidebar. Click to paste or run.**
 
+[![CI](https://github.com/Franklyn-R-Silva/flutter-terminal-helper/actions/workflows/ci.yml/badge.svg)](https://github.com/Franklyn-R-Silva/flutter-terminal-helper/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
 ![VS Code](https://img.shields.io/badge/VS%20Code-1.80+-007ACC)
 [![Open VSX](https://img.shields.io/open-vsx/v/Franklyn-R-Silva/flutter-terminal-helper?label=Open%20VSX&color=a60ee5)](https://open-vsx.org/extension/Franklyn-R-Silva/flutter-terminal-helper)
+[![Open VSX downloads](https://img.shields.io/open-vsx/dt/Franklyn-R-Silva/flutter-terminal-helper?label=downloads)](https://open-vsx.org/extension/Franklyn-R-Silva/flutter-terminal-helper)
 
 </div>
 
@@ -23,7 +24,6 @@ uncomment:
 ![Flutter Terminal Helper in action](images/demo.gif)
 -->
 
-
 A lightweight sidebar for Flutter and Dart developers. Browse the most-used CLI
 commands grouped by category and send them to your terminal with a single click —
 no need to memorize flags or retype long commands.
@@ -33,7 +33,7 @@ no need to memorize flags or retype long commands.
 
 ## Features
 
-- **Sidebar TreeView** — commands grouped into categories (Flutter, Dart,
+- **Sidebar TreeView** — commands grouped into categories (Flutter, Dart, FVM,
   Firebase, Supabase, Melos, GetX, …).
 - **Search** 🔍 — a magnifying-glass button (**Ctrl+Alt+F**) opens a searchable
   list of every command; pick one to paste or run it.
@@ -49,8 +49,11 @@ no need to memorize flags or retype long commands.
 - **Localized** — English and Portuguese (pt-BR) UI, following your editor language.
 - **Resilient** — loading state, guarded actions and localized error messages; a
   malformed command never breaks the sidebar.
-- **Zero dependencies** — no Flutter/Dart installation required to browse commands;
-  they only need to be installed to actually run them.
+- **Lightweight** — a single ~20 KB bundle with no runtime dependencies that only
+  activates when you open the sidebar or search. Flutter/Dart are only needed to
+  actually run the commands.
+- **Workspace Trust aware** — an untrusted folder can't inject commands into the
+  sidebar (see [Security](#security)).
 
 ## Command categories
 
@@ -66,6 +69,7 @@ no need to memorize flags or retype long commands.
 | 📦 Project | `flutter create`, `--platforms=…` |
 | ⚙️ Code Generation | `build_runner build`, `gen-l10n` |
 | 🔥 Firebase | `flutterfire configure`, `firebase deploy` |
+| 🧭 FVM | `fvm install`, `fvm use`, `fvm list` |
 | 🔍 Info | `flutter --version`, `dart --version` |
 | 🟢 Supabase | `supabase start`, `db push`, `functions deploy` |
 | 📦 Melos | `melos bootstrap`, `melos run`, `melos publish` |
@@ -83,8 +87,9 @@ no need to memorize flags or retype long commands.
 ### From Open VSX (Antigravity, Windsurf, Cursor, VSCodium)
 
 Antigravity and other VS Code-based editors use the
-[Open VSX Registry](https://open-vsx.org). Once published there, search for
-**Flutter Terminal Helper** in the Extensions view and click **Install**.
+[Open VSX Registry](https://open-vsx.org). Search for **Flutter Terminal Helper**
+in the Extensions view and click **Install**, or open its
+[Open VSX page](https://open-vsx.org/extension/Franklyn-R-Silva/flutter-terminal-helper).
 
 ### From source
 
@@ -118,8 +123,8 @@ npm run version:minor    # bumps package.json + creates the vX.Y.Z tag
 git push --follow-tags   # pushes the commit and the tag
 ```
 
-Pushing the tag builds the extension and publishes a **GitHub Release with the
-`.vsix` attached**, so any specific version can be downloaded from the
+Pushing the tag builds and tests the extension, then a separate tag-only job
+publishes a **GitHub Release with the `.vsix` attached**, so any specific version can be downloaded from the
 [Releases](https://github.com/Franklyn-R-Silva/flutter-terminal-helper/releases)
 page. Add these repository secrets to also auto-publish:
 
@@ -164,6 +169,22 @@ Add your own frequently-used commands to the sidebar via
 
 Each entry needs a `label` and a `command`; `description` is optional. The
 sidebar updates as soon as you save the setting.
+
+> **Workspace Trust:** custom commands (and `clickAction`) defined in a folder's
+> `.vscode/settings.json` only apply once you trust that folder. In Restricted
+> Mode only your user settings are used, so a cloned repo can't make a click run
+> its own commands.
+
+## Security
+
+- Honors [Workspace Trust](https://code.visualstudio.com/docs/editor/workspace-trust):
+  in Restricted Mode, `flutterHelper.customCommands` and `flutterHelper.clickAction`
+  from a folder's settings are ignored.
+- Never runs anything on its own: commands are only sent to the terminal when you
+  click them, and by default they are pasted for review, not executed.
+- No telemetry and no network access.
+
+Found a vulnerability? Please report it privately — see [SECURITY.md](SECURITY.md).
 
 ## Requirements
 

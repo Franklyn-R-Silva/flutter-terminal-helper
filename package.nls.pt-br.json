@@ -1,5 +1,6 @@
 {
   "ext.description": "Comandos CLI do Flutter & Dart organizados por categoria na barra lateral. Clique para colar ou executar no terminal.",
+  "capabilities.untrusted.desc": "No Modo Restrito, os comandos personalizados e a ação de clique definidos nas configurações do workspace são ignorados, para que uma pasta não confiável não faça um clique rodar comandos dela.",
   "view.flutterCommands.name": "Comandos Flutter",
   "cmd.paste.title": "Colar comando no terminal",
   "cmd.run.title": "Executar comando no terminal",

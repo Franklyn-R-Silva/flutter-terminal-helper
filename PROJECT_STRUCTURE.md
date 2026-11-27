@@ -6,8 +6,10 @@ flutter-terminal-helper/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/                  # Bug / feature / add-command templates
 │   ├── PULL_REQUEST_TEMPLATE.md         # PR template
+│   ├── dependabot.yml                   # Grouped monthly dependency updates
 │   └── workflows/
-│       └── ci.yml                       # GitHub Actions CI (build + typecheck)
+│       ├── ci.yml                       # Type-check, lint, format, tests, .vsix
+│       └── release.yml                  # Tag-driven GitHub Release + marketplace publish
 │
 ├── .vscode/                             # Debug/build config for development
 │
@@ -17,14 +19,16 @@ flutter-terminal-helper/
 │   └── activitybar.svg                  # Activity Bar glyph
 │
 ├── scripts/
-│   └── generate-icon.js                 # Renders icon.png from icon.svg (sharp)
+│   └── generate-icon.js                 # Renders icon.png from icon.svg (npm i --no-save sharp)
 │
 ├── src/
 │   ├── data/
 │   │   ├── flutter_commands_categorized.ts  # Command database (typed categories)
 │   │   └── commandsRepository.ts        # Validates/loads the catalog
+│   ├── state/
+│   │   └── stores.ts                    # Favorites + Recent (globalState)
 │   ├── terminal/
-│   │   └── terminalManager.ts           # Dedicated-terminal handling
+│   │   └── terminalManager.ts           # Dedicated-terminal handling, FVM, argument prompt
 │   ├── views/
 │   │   └── commandsTreeView.ts          # Sidebar TreeView + command registration
 │   ├── test/                            # Unit + integration tests (Mocha)

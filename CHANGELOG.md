@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **🧭 FVM** category (`fvm install`, `fvm use`, `fvm list`, `fvm releases`,
+  `fvm doctor`) and new commands: `pub upgrade --major-versions`, `pub deps`,
+  `pod install` (iOS), `build apk --split-per-abi`, `build web --wasm`,
+  `run -d <device>`, `flutter install`, `test --update-goldens`, `dart fix --dry-run`.
+
+### Changed
+
+- The extension now activates only when the sidebar opens or one of its
+  commands runs, instead of on every VS Code startup.
+- **Launch Emulator** and **Create Project** ask for the emulator ID / project
+  name instead of using the hard-coded `Pixel_6` / `my_app`.
+- Changing `flutterHelper.recentLimit` applies immediately (no reload).
+- Commands that need a sidebar item (run, paste, copy, favorite) are hidden
+  from the Command Palette, where they did nothing.
+
+### Fixed
+
+- Starring a command or running one no longer reloads the whole catalog, which
+  flashed "Loading commands…" and could collapse the open categories.
+
+### Security
+
+- Supports **Workspace Trust**: in Restricted Mode, `customCommands` and
+  `clickAction` from workspace settings are ignored, so an untrusted repo
+  can't turn a click into running its own commands.
+- Command tooltips render labels as plain text instead of Markdown.
+- Release workflow: publish tokens are only visible to a tag-only publish job
+  that doesn't run dependency scripts; all Actions pinned by commit SHA;
+  Dependabot (grouped, monthly) added.
+
 ## [0.5.0] - 2026-07-13
 
 ### Added

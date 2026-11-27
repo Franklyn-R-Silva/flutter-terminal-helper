@@ -1,5 +1,6 @@
 {
   "ext.description": "Categorized Flutter & Dart CLI commands in a sidebar. Click to paste or run in your terminal.",
+  "capabilities.untrusted.desc": "In Restricted Mode, custom commands and the click action from workspace settings are ignored, so an untrusted folder cannot make a click run its own commands.",
   "view.flutterCommands.name": "Flutter Commands",
   "cmd.paste.title": "Paste command in terminal",
   "cmd.run.title": "Run command in terminal",

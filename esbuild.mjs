@@ -19,7 +19,7 @@ const options = {
   outfile: "dist/extension.js",
   format: "cjs",
   platform: "node",
-  target: "node18",
+  target: "node16", // VS Code 1.80 (engines) runs on Electron 22 → Node 16
   external: ["vscode"],
   sourcemap: !production,
   minify: production,

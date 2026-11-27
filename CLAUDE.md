@@ -21,7 +21,7 @@ npm run format       # Prettier --write  (format:check to verify only)
 npm test             # unit + integration tests in a real VS Code instance
 npm run package:build # esbuild bundle+minify → dist/extension.js
 npm run package      # vsce package --no-dependencies → .vsix
-npm run icon         # regenerate images/icon.png from images/icon.svg (sharp)
+npm run icon         # regenerate images/icon.png from images/icon.svg (needs `npm i --no-save sharp`)
 ```
 
 `npm test` (via `@vscode/test-cli`, config in `.vscode-test.mjs`) downloads a VS Code
@@ -79,8 +79,15 @@ touching `.vscodeignore` or the build scripts.
 
 The `package.json` `contributes` block wires everything to the runtime: the view container,
 the `flutterCommands` view, the `flutterHelper.*` commands, their menu placement (inline
-run/copy buttons + context menu), and the three `flutterHelper.*` settings. Any new command
-or setting must be declared there **and** implemented in code.
+run/copy buttons + context menu), and the `flutterHelper.*` settings. Any new command
+or setting must be declared there **and** implemented in code. Commands that need a tree item
+argument are hidden from the palette via `menus.commandPalette` (`when: false`).
+
+**Activation & trust**: `activationEvents` is empty on purpose — VS Code ≥1.74 activates on the
+contributed view/commands. `capabilities.untrustedWorkspaces.restrictedConfigurations` lists
+settings that can run code from a click (`customCommands`, `clickAction`); add any new setting
+of that kind there. `@types/vscode` is pinned to the `engines.vscode` version so newer APIs fail
+to type-check; bump both together.
 
 ## Conventions (important)
 

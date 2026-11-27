@@ -44,10 +44,19 @@
     "Other",
     "Snippets"
   ],
-  "activationEvents": [
-    "onStartupFinished"
-  ],
+  "activationEvents": [],
   "main": "./dist/extension.js",
+  "capabilities": {
+    "virtualWorkspaces": false,
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "%capabilities.untrusted.desc%",
+      "restrictedConfigurations": [
+        "flutterHelper.customCommands",
+        "flutterHelper.clickAction"
+      ]
+    }
+  },
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -119,6 +128,28 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "flutterHelper.pasteFromTree",
+          "when": "false"
+        },
+        {
+          "command": "flutterHelper.runFromTree",
+          "when": "false"
+        },
+        {
+          "command": "flutterHelper.copyCommand",
+          "when": "false"
+        },
+        {
+          "command": "flutterHelper.addFavorite",
+          "when": "false"
+        },
+        {
+          "command": "flutterHelper.removeFavorite",
+          "when": "false"
+        }
+      ],
       "view/title": [
         {
           "command": "flutterHelper.searchCommands",
@@ -333,7 +364,7 @@
     "@eslint/js": "^9.39.5",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.1",
-    "@types/vscode": "^1.80.0",
+    "@types/vscode": "1.80.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "^3.2.1",
@@ -343,7 +374,6 @@
     "mocha": "^11.7.6",
     "ovsx": "^0.10.1",
     "prettier": "^3.9.5",
-    "sharp": "^0.33.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.63.0"
   }
