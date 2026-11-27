@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-27
+
 ### Fixed
 
 - The extension now also publishes to the **Visual Studio Marketplace**, so it
@@ -180,7 +182,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sidebar TreeView with categorized Flutter and Dart CLI commands.
 - One-click paste of a command into the active terminal.
 
-[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Franklyn-R-Silva/flutter-terminal-helper/compare/v0.3.0...v0.4.0
