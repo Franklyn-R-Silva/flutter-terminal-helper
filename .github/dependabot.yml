@@ -16,6 +16,12 @@ updates:
     ignore:
       # Must match engines.vscode; bump both together by hand.
       - dependency-name: "@types/vscode"
+      # typescript-eslint 8 requires typescript <6.1; unblock when it supports 7.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # Node types follow the CI Node line (22), not the newest release.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
