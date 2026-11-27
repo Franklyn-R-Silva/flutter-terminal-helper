@@ -345,7 +345,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -w",
     "check-types": "tsc --noEmit -p ./",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "package:build": "node esbuild.mjs --production",
