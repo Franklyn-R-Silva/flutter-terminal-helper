@@ -6,11 +6,14 @@ Currently supported versions with security updates:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.0.x   | :white_check_mark: |
+| 0.5.x   | :white_check_mark: |
+| < 0.5   | :x:                |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within Flutter Terminal Helper, please send an email to the maintainers. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Flutter Terminal Helper, please report it privately through
+[GitHub's private vulnerability reporting](https://github.com/Franklyn-R-Silva/flutter-terminal-helper/security/advisories/new)
+or by email to **franklyn.dev.mobile@gmail.com**.
 
 **Please do not open a public issue for security vulnerabilities.**
 
@@ -34,6 +37,10 @@ This extension:
 - Does not collect or transmit any user data
 - Does not access external services
 - Only interacts with the local VSCode terminal
+- Honors [Workspace Trust](https://code.visualstudio.com/docs/editor/workspace-trust): in Restricted Mode,
+  `flutterHelper.customCommands` and `flutterHelper.clickAction` from workspace settings are ignored, so an
+  untrusted folder cannot make a click run its own commands
+- Ships no runtime dependencies (a single bundled file built against the VS Code API)
 - All code is open source and can be reviewed
 
 ## Scope

@@ -1,13 +1,13 @@
 # Pre-Publication Checklist
 
-The manifest is already filled in (publisher `DevFullStack-Franklyn-R-Silva`, icon,
+The manifest is already filled in (publisher `Franklyn-R-Silva`, icon,
 repository URLs). Use this list before each release.
 
 ## 1. Sanity checks
 
 - [ ] `npm install` runs cleanly.
 - [ ] `npm run compile` succeeds with no errors.
-- [ ] `npm run lint` (typecheck) passes.
+- [ ] `npm run check-types` and `npm run lint` pass.
 - [ ] Press <kbd>F5</kbd> and verify in the Extension Development Host:
   - [ ] The **Flutter Helper** view appears in the Activity Bar.
   - [ ] Categories expand and commands are listed.
@@ -40,7 +40,7 @@ Antigravity installs extensions from the [Open VSX Registry](https://open-vsx.or
 1. Create an account at https://open-vsx.org (sign in with GitHub).
 2. Create a namespace matching the publisher:
    ```bash
-   npx ovsx create-namespace DevFullStack-Franklyn-R-Silva -p <TOKEN>
+   npx ovsx create-namespace Franklyn-R-Silva -p <TOKEN>
    ```
 3. Publish:
    ```bash
@@ -53,7 +53,7 @@ Antigravity installs extensions from the [Open VSX Registry](https://open-vsx.or
 ## 5. (Optional) Publish to the VS Code Marketplace
 
 1. Create an Azure DevOps Personal Access Token with **Marketplace → Manage**.
-2. `npx vsce login DevFullStack-Franklyn-R-Silva`
+2. `npx vsce login Franklyn-R-Silva`
 3. `npx vsce publish`
 
 ## 6. GitHub release

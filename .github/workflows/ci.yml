@@ -2,9 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -12,13 +19,15 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
@@ -35,20 +44,18 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Bundle extension
-        run: npm run package:build
-
-      # VS Code needs a display server to run the integration tests headlessly.
+      # pretest builds out/ (tsc) and dist/ (esbuild). VS Code needs a display
+      # server to run the integration tests headlessly.
       - name: Test
         run: xvfb-run -a npm test
 
       - name: Package .vsix
-        if: matrix.node-version == '20.x'
+        if: matrix.node-version == '24.x'
         run: npm run package
 
       - name: Upload .vsix artifact
-        uses: actions/upload-artifact@v4
-        if: matrix.node-version == '20.x'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: matrix.node-version == '24.x'
         with:
           name: flutter-terminal-helper-vsix
           path: "*.vsix"

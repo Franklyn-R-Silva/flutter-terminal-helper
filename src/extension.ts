@@ -10,9 +10,10 @@ import { FavoritesStore, RecentStore } from "./state/stores";
 
 export function activate(context: vscode.ExtensionContext) {
   try {
-    const recentLimit = vscode.workspace
-      .getConfiguration("flutterHelper")
-      .get<number>("recentLimit", 8);
+    const recentLimit = () =>
+      vscode.workspace
+        .getConfiguration("flutterHelper")
+        .get<number>("recentLimit", 8);
     const favorites = new FavoritesStore(context.globalState);
     const recent = new RecentStore(context.globalState, recentLimit);
     registerCommandsTreeView(context, favorites, recent);

@@ -76,27 +76,30 @@ export class FavoritesStore {
 
 /** Bounded MRU list of the commands the user has run/pasted. */
 export class RecentStore {
+  /** `limit` is read on every call so a settings change applies without a reload. */
   constructor(
     private readonly store: KeyValueStore,
-    private readonly limit: number
+    private readonly limit: () => number
   ) {}
 
   list(): FlutterCommand[] {
-    if (this.limit <= 0) {
+    const limit = this.limit();
+    if (limit <= 0) {
       return [];
     }
-    return readList(this.store, RECENT_KEY).slice(0, this.limit);
+    return readList(this.store, RECENT_KEY).slice(0, limit);
   }
 
   /** Records a use: moves the command to the front, de-duplicated and capped. */
   async record(cmd: FlutterCommand): Promise<void> {
-    if (this.limit <= 0) {
+    const limit = this.limit();
+    if (limit <= 0) {
       return;
     }
     const rest = readList(this.store, RECENT_KEY).filter(
       (c) => !sameCommand(c, cmd.command)
     );
-    const next = [cmd, ...rest].slice(0, this.limit);
+    const next = [cmd, ...rest].slice(0, limit);
     await this.store.update(RECENT_KEY, next);
   }
 

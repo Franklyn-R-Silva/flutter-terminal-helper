@@ -89,6 +89,11 @@ export class FlutterCommandsProvider
     void this.load();
   }
 
+  /** Re-renders Favorites/Recent without reloading the catalog (no loading flash). */
+  update(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
   private updateMessage(): void {
     if (!this.treeView) {
       return;
@@ -218,9 +223,12 @@ class CommandItem extends vscode.TreeItem {
       cmd
     );
     item.description = cmd.command.trim();
-    item.tooltip = new vscode.MarkdownString(
-      `**${cmd.label}**\n\n${description}\n\n\`${cmd.command.trim()}\``
-    );
+    // Labels/commands can come from workspace settings: escape, never render as markdown.
+    item.tooltip = new vscode.MarkdownString()
+      .appendText(cmd.label)
+      .appendMarkdown("\n\n")
+      .appendText(description)
+      .appendCodeblock(cmd.command.trim(), "shell");
     item.iconPath = new vscode.ThemeIcon(isFavorite ? "star-full" : "terminal");
     item.contextValue = isFavorite ? "commandFavorite" : "command";
     // Clicking runs the configured default action (paste or run).
@@ -288,7 +296,7 @@ export function registerCommandsTreeView(
     const cmd = resolveCommandObject(arg);
     if (sent && cmd) {
       await recent.record(cmd);
-      provider.refresh();
+      provider.update();
     }
   };
 
@@ -328,7 +336,7 @@ export function registerCommandsTreeView(
     const cmd = resolveCommandObject(arg);
     if (cmd) {
       await favorites.toggle(cmd);
-      provider.refresh();
+      provider.update();
     }
   });
 
@@ -336,13 +344,13 @@ export function registerCommandsTreeView(
     const command = resolveCommand(arg);
     if (command) {
       await favorites.remove(command);
-      provider.refresh();
+      provider.update();
     }
   });
 
   register("flutterHelper.clearRecent", async () => {
     await recent.clear();
-    provider.refresh();
+    provider.update();
   });
 
   register("flutterHelper.refreshCommands", () => provider.refresh());
@@ -366,12 +374,9 @@ export function registerCommandsTreeView(
       matchOnDescription: true,
       matchOnDetail: true,
     });
-    if (picked) {
-      const sent = await runDefaultAction(picked.cmd.command);
-      if (sent) {
-        await recent.record(picked.cmd);
-        provider.refresh();
-      }
+    if (picked && (await runDefaultAction(picked.cmd.command))) {
+      await recent.record(picked.cmd);
+      provider.update();
     }
   });
 
@@ -380,6 +385,8 @@ export function registerCommandsTreeView(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("flutterHelper.customCommands")) {
         provider.refresh();
+      } else if (e.affectsConfiguration("flutterHelper.recentLimit")) {
+        provider.update();
       }
     })
   );
