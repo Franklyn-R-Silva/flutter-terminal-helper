@@ -37,7 +37,8 @@ Releases use `npm run version:patch|minor|major` (bumps + tags) and `git push --
 `release.yml` then creates the GitHub Release and publishes to Open VSX **and** the VS Code
 Marketplace via trusted publishing (OIDC, no token; `ovsx --trusted-publishing`, `vsce --oidc`).
 Microsoft VS Code only searches the Marketplace, the forks only Open VSX.
-`@vscode/test-cli`'s nested mocha is forced to the root version through `overrides` in package.json (drops a high advisory in mocha 11).
+`@vscode/test-cli`'s nested mocha is forced to the root version through `overrides` in
+package.json (drops a high advisory in mocha 11).
 OpenSSF Best Practices entry: https://www.bestpractices.dev/projects/17193 — keep its
 answers true when changing CI, CONTRIBUTING or SECURITY.
 
